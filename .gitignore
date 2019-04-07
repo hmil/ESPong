@@ -1,0 +1,6 @@
+*.lua.example
+*.uploaded
+*.bin
+*.bak
+build/
+esptool.py

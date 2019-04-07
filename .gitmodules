@@ -1,0 +1,10 @@
+[submodule "nodemcu-uploader"]
+	path = nodemcu-uploader
+	url = https://github.com/kmpm/nodemcu-uploader.git
+[submodule "nodemcu-firmware"]
+	path = nodemcu-firmware
+	url = https://github.com/hmil/nodemcu-firmware.git
+	branch = u8g2-upgrade
+[submodule "esptool"]
+	path = esptool
+	url = https://github.com/espressif/esptool.git
