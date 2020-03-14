@@ -78,8 +78,4 @@ D6          | oled scl    | iic clock
 D5          | oled sda    | iic data
 D2          | btn up      | Up / OK button
 D3          | btn down    | Down button
-D0          | btn com     | Com for buttons*
-
-*D0 is used as a ground pin for the buttons because it makes for a cleaner breadboard layout.
-
 
