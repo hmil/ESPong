@@ -1,15 +1,18 @@
-dofile('config.lua')
-dofile('display.lua')
-dofile('game.lua')
-dofile('networking.lua')
 
-setupDisplay()
+dofile('config.lc')
+
+tmr.create():alarm(3000, tmr.ALARM_SINGLE, function()
+    dofile('game.lc')
+    dofile('networking.lc')
+    dofile('display.lc')
+    
+    setupDisplay()
+    mainMenu()
+end)
 
 
 gpio.mode(BTN_DOWN, gpio.INPUT, gpio.PULLUP)
 gpio.mode(BTN_UP, gpio.INPUT, gpio.PULLUP)
-gpio.mode(BTN_COM, gpio.OUTPUT)
-gpio.write(BTN_COM, gpio.LOW)
 
 function debounce (func)
     local last = 0
@@ -81,5 +84,3 @@ mainMenu = function ()
 
     drawMenu()
 end
-
-mainMenu()

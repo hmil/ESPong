@@ -44,7 +44,10 @@ hostGame = function()
                     isMultiplayer = true,
                     isMaster = true,
                     updateCb = updateCb
-                }, onMultiplayerGameEnd)
+                }, function()
+                    s:send(42, slaveIP, "end")
+                    tmr.create():alarm(1000, tmr.ALARM_SINGLE, onMultiplayerGameEnd)
+                end)
                 hasStarted = true
             end
         else
@@ -85,15 +88,23 @@ joinGame = function()
         s = net.createUDPSocket()
         s:listen(42)
         s:on("receive", function(s, data, port, ip)
-            requestGameUpdate(data:byte(2), data:byte(3), data:byte(4), data:byte(5), data:byte(6))
+            if data == "end" then
+                endGame()
+            else
+                requestGameUpdate(data:byte(2), data:byte(3), data:byte(4), data:byte(5), data:byte(6))
+            end
         end) 
 
-        s:send(42, masterIP, "start")
-        startGame({
-            isMultiplayer = true,
-            isMaster = false,
-            updateCb = updateCb
-        }, onMultiplayerGameEnd)
-        hasStarted = true
+        tmr.create():alarm(1000, tmr.ALARM_SINGLE, function()
+            s:send(42, masterIP, "start")
+            tmr.create():alarm(100, tmr.ALARM_SINGLE, function()
+                startGame({
+                    isMultiplayer = true,
+                    isMaster = false,
+                    updateCb = updateCb
+                }, onMultiplayerGameEnd)
+                hasStarted = true
+            end)
+        end)
     end)
 end

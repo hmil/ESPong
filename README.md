@@ -1,12 +1,29 @@
 
-# PoC of a multiplayer pong game on the ESP8266
+# Multiplayer pong game on the ESP8266
 
-## Setup
+## Instructions
+
+Clone the repository with submodules.
 
 ```
 git clone --recurse-submodules git@github.com:hmil/espong.git
 cd espong
 ```
+
+### Building the firmware
+
+Chose one of three options to build the firmware:
+
+#### Option 1: Cloud build (for noobs)
+
+Get your firmware online at [https://nodemcu-build.com/](https://nodemcu-build.com/).
+
+Chose the following settings:
+
+- Branch: master
+- Modules: ADC, bit, file, GPIO, i2c, net, node, SJSON, timer, UART, U8G2, WiFi
+
+#### Option 2: With docker (advanced mode)
 
 To build and flash the firmware, you'll either need Docker or a have the tools to build a nodemcu firmware.
 
@@ -15,12 +32,21 @@ Connect your nodemcu and boot it in flash mode. Then run:
 ```
 # Build in Docker:
 make flash
+```
 
-# Or, if you want to build natively
+#### Option 3: Native build (expert mode)
+
+Connect your nodemcu and boot it in flash mode. Then run:
+
+```
 BUILD_FIRMWARE_IN_DOCKER=false make flash
 ```
 
-To upload the lua files, simply run:
+### Upload the software
+
+Reboot your chip and wait a minute for the initial setup to complete. Then upload the lua scripts.
+
+To upload the lua files, run:
 
 ```
 make upload
@@ -30,7 +56,6 @@ make upload
 >
 >     make clean
 >
- ️
 
 ### Custom serial port
 
@@ -40,4 +65,21 @@ For instance:
 ```
 PORT=/dev/cu.usbmodem1234 make upload
 ```
+
+## Wiring
+
+![wiring diagram](./espong.png)
+
+NodeMCU pin | Connects to | Function
+------------|-------------|----------
+3v3         | oled vcc    | screen power
+gnd         | oled gnd    | screen ground
+D6          | oled scl    | iic clock
+D5          | oled sda    | iic data
+D2          | btn up      | Up / OK button
+D3          | btn down    | Down button
+D0          | btn com     | Com for buttons*
+
+*D0 is used as a ground pin for the buttons because it makes for a cleaner breadboard layout.
+
 

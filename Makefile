@@ -2,9 +2,12 @@
 NODEMCU-UPLOADER=./nodemcu-uploader/nodemcu-uploader.py
 # Serial port. This will probably be different on your machine
 PORT?=/dev/cu.SLAB_USBtoUART
-# Serial baudrate
+# Serial baudrate
 SPEED=115200
-export BUILD_FIRMWARE_IN_DOCKER=true
+ifndef BUILD_FIRMWARE_IN_DOCKER
+	override BUILD_FIRMWARE_IN_DOCKER=true
+endif
+
 FIRMWARE=build/nodemcu-firmware.bin
 
 NODEMCU-COMMAND=python $(NODEMCU-UPLOADER) -b $(SPEED) --start_baud $(SPEED) -p $(PORT)
@@ -17,13 +20,18 @@ LUA_BUILD_FILES := $(LUA_FILES:src/%.lua=build/%.$(SUFFIX))
 upload: $(LUA_BUILD_FILES)
 
 build/%.$(SUFFIX): src/%.lua
-	$(NODEMCU-COMMAND) upload "$<:$(patsubst src/%,%,$<)"
+	$(NODEMCU-COMMAND) node restart
+	$(NODEMCU-COMMAND) upload --compile "$<:$(patsubst src/%,%,$<)"
 	mkdir -p build
 	touch $@
 
 .PHONY: clean
 clean:
 	rm -rf build/*.$(SUFFIX)
+
+.PHONY: clean-device
+clean-device: clean
+	$(NODEMCU-COMMAND) file format
 
 .PHONY: list
 list:
@@ -34,8 +42,8 @@ restart:
 	$(NODEMCU-COMMAND) node restart
 
 
-$(FIRMWARE):
-	$(SHELL) build-firmware.sh
+$(FIRMWARE): user_modules.h nodemcu-firmware/Makefile
+	BUILD_FIRMWARE_IN_DOCKER=$(BUILD_FIRMWARE_IN_DOCKER) $(SHELL) build-firmware.sh
 
 esptool.py:
 	curl -o esptool.py https://raw.githubusercontent.com/espressif/esptool/master/esptool.py

@@ -32,14 +32,14 @@ updateBall = function()
         else -- no collision with paddle, test collision with wall
             if ball.x + BALL_RADIUS >= SCREEN_WIDTH then
                 if isMultiplayer == true and isMaster then
-                    hasLost = true
+                    endGame()
                 else
                     ball.x = 2 * (SCREEN_WIDTH - BALL_RADIUS) - ball.x
                     ball.vx = -ball.vx;
                 end
             elseif ball.x < 0 then
                 if isMultiplayer == false or isMaster then
-                    hasLost = true
+                    endGame()
                 end
                 -- ball.x = BALL_RADIUS - ball.x
                 -- ball.vx = -ball.vx
@@ -131,6 +131,10 @@ requestGameUpdate = function(otherPaddlePos, ballX, ballY, ballVx, ballVy)
         ballRequest.vx = -ballVx
         ballRequest.vy = -ballVy
     end
+end
+
+endGame = function()
+    hasLost = true
 end
 
 startGame = function(config, endCallback)
